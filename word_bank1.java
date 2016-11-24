@@ -5,6 +5,7 @@ import java.util.Random;
 /**
  *
  * @author Julie Rodriguez
+ * @author Timothy Reser
  */
 public class word_bank1 extends javax.swing.JFrame {
 
@@ -25,8 +26,8 @@ public class word_bank1 extends javax.swing.JFrame {
     }//end constructor()
 
     /**
-     * This constructor allows for a custom word bank to be provided and the
-     * classes randomWord will be chosen from that array.
+     * This constructor allows for a custom word bank to be provided and this
+     * class's randomWord will be chosen from that array.
      *
      * @param wordBank is a array of words for use in picking a randomWord.
      */

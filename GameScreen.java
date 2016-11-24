@@ -5,17 +5,41 @@
  */
 package hangmangame;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.*;
+
 /**
  *
  * @author Tim Reser
  */
 public class GameScreen extends javax.swing.JFrame {
 
+    String chosenWord;
+    word_bank1 wordBank;
+    String[] image_bank = {"0.jpg",
+        "1.tif",
+        "2.tif",
+        "3.tif",
+        "4.tif",
+        "5.tif",
+        "6.tif",
+        "won.tif",
+        "lost.tif"};
+    ImageIcon gallowsIcon;
+
     /**
      * Creates new form GameScreen
      */
     public GameScreen() {
         initComponents();
+        word_bank1 wordBank = new word_bank1();
+        chosenWord = wordBank.getWord();
+        gallowsIcon = new ImageIcon(getClass().getResource("/images/0.jpg"));
+        gallowsPic.setIcon(gallowsIcon);
+        tboxLetter.requestFocus();
     }
 
     /**
@@ -37,21 +61,24 @@ public class GameScreen extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        gallowsPic.setText("jLabel1");
         gallowsPic.setBorder(new javax.swing.border.MatteBorder(null));
 
         bGuess.setText("Guess");
+        bGuess.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bGuessActionPerformed(evt);
+            }
+        });
 
         bGiveUp.setText("Give Up");
 
-        tboxLetter.setEditable(false);
-
-        lSecretWord.setText("         _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ ");
+        lSecretWord.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lSecretWord.setText("         _ _ _ _ _ _ _ _ _ _ _ _ _ ");
         lSecretWord.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel1.setText("Incorrect Guesses:");
 
-        lBadGuesses.setText("jLabel2");
+        lBadGuesses.setText("None");
         lBadGuesses.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -59,24 +86,23 @@ public class GameScreen extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(tboxLetter, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(bGuess)
+                .addGap(18, 18, 18)
+                .addComponent(bGiveUp)
+                .addContainerGap(184, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(tboxLetter, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(bGuess)
-                        .addGap(18, 18, 18)
-                        .addComponent(bGiveUp))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lSecretWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(gallowsPic, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lBadGuesses, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(27, Short.MAX_VALUE))
+                    .addComponent(lSecretWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(gallowsPic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lBadGuesses, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(33, 33, 33))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -101,7 +127,27 @@ public class GameScreen extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void bGuessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuessActionPerformed
+        String nextGuess = tboxLetter.getText().toLowerCase().trim();
+        String popUpMessage = "Please only guess one letter at a time.";
+        char temp = ' ';
+        //check to see if the user only entered a letter, then process the guess.
+        if (validGuess(nextGuess)) {
+            temp = nextGuess.charAt(0);
+            processGuess(temp);
+            tboxLetter.setText("");
+        } else {
+            tboxLetter.setText("");
+            JOptionPane.showMessageDialog(this, popUpMessage, "Try Again", JOptionPane.ERROR_MESSAGE);
+        }
+        tboxLetter.requestFocus();
+    }//GEN-LAST:event_bGuessActionPerformed
+//end bGuessActionPerformed()
+
     /**
+     * This method creates and displays a GameScreen, effectively starting the
+     * game.
+     *
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -136,6 +182,51 @@ public class GameScreen extends javax.swing.JFrame {
         });
     }
 
+    /**
+     * Method checks to see if the user guessed a letter and only one letter.
+     *
+     * @param in the String to be tested to ensure it's a single letter.
+     * @return
+     */
+    public boolean validGuess(String in) {
+        if (!(in.length() == 1)) {
+            return false;
+        }
+        if (!Character.isLetter(in.charAt(0))) {
+            return false;
+        } else {
+            return true;
+        }
+    }//end validGuess(String)
+
+    /**
+     * This method determines if the guess matches one of the letters in the
+     * chosen word and then calls the appropriate method to update the
+     * GameScreen based on a correct/incorrect guess.
+     *
+     * @param guess the letter guessed by the user.
+     */
+    public void processGuess(char guess) {
+        boolean goodGuess = false;
+        for (int i = 0; i < chosenWord.length(); i++) {
+            if (guess == chosenWord.charAt(i)) {
+                correctGuess();
+                goodGuess = true;
+            }
+        }
+        if (!goodGuess) {
+            incorrectGuess();
+        }
+    }//end processGuess(char)
+
+    private void correctGuess() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void incorrectGuess() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bGiveUp;
     private javax.swing.JButton bGuess;
@@ -145,4 +236,5 @@ public class GameScreen extends javax.swing.JFrame {
     private javax.swing.JLabel lSecretWord;
     private javax.swing.JTextField tboxLetter;
     // End of variables declaration//GEN-END:variables
+
 }
