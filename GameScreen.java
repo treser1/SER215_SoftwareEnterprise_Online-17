@@ -17,17 +17,19 @@ import javax.swing.*;
  */
 public class GameScreen extends javax.swing.JFrame {
 
+    final int POSSIBLE_CHANCES = 7;
     String chosenWord;
     word_bank1 wordBank;
-    String[] image_bank = {"0.jpg",
-        "1.tif",
-        "2.tif",
-        "3.tif",
-        "4.tif",
-        "5.tif",
-        "6.tif",
-        "won.tif",
-        "lost.tif"};
+    String[] image_bank = {"/images/0.jpg",
+        "/images/1.jpg",
+        "/images/2.jpg",
+        "/images/3.jpg",
+        "/images/4.jpg",
+        "/images/5.jpg",
+        "/images/6.jpg",
+        "/images/won.jpg",
+        "/images/lost.jpg"};
+    String[] badGuesses = {"", "", "", "", "", "", ""};
     ImageIcon gallowsIcon;
 
     /**
@@ -37,7 +39,7 @@ public class GameScreen extends javax.swing.JFrame {
         initComponents();
         word_bank1 wordBank = new word_bank1();
         chosenWord = wordBank.getWord();
-        gallowsIcon = new ImageIcon(getClass().getResource("/images/0.jpg"));
+        gallowsIcon = new ImageIcon(getClass().getResource(image_bank[0]));
         gallowsPic.setIcon(gallowsIcon);
         tboxLetter.requestFocus();
     }
@@ -57,7 +59,8 @@ public class GameScreen extends javax.swing.JFrame {
         tboxLetter = new javax.swing.JTextField();
         lSecretWord = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        lBadGuesses = new javax.swing.JLabel();
+        lBadGuesses1 = new javax.swing.JLabel();
+        lBadGuesses2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,50 +81,63 @@ public class GameScreen extends javax.swing.JFrame {
 
         jLabel1.setText("Incorrect Guesses:");
 
-        lBadGuesses.setText("None");
-        lBadGuesses.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lBadGuesses1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lBadGuesses1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lBadGuesses1.setFocusable(false);
+
+        lBadGuesses2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lBadGuesses2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(tboxLetter, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(bGuess)
-                .addGap(18, 18, 18)
-                .addComponent(bGiveUp)
-                .addContainerGap(184, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lSecretWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(gallowsPic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lBadGuesses, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(33, 33, 33))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lSecretWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(49, 49, 49))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addComponent(tboxLetter, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(bGuess)
+                                .addGap(18, 18, 18)
+                                .addComponent(bGiveUp)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lBadGuesses1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lBadGuesses2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(46, 46, 46))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(gallowsPic, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(30, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(gallowsPic, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(gallowsPic, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lBadGuesses, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(lSecretWord, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bGuess)
-                    .addComponent(bGiveUp)
-                    .addComponent(tboxLetter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46))
+                        .addComponent(lBadGuesses1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lSecretWord, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(bGuess)
+                        .addComponent(bGiveUp)
+                        .addComponent(tboxLetter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lBadGuesses2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(41, 41, 41))
         );
 
         pack();
@@ -210,21 +226,42 @@ public class GameScreen extends javax.swing.JFrame {
         boolean goodGuess = false;
         for (int i = 0; i < chosenWord.length(); i++) {
             if (guess == chosenWord.charAt(i)) {
-                correctGuess();
+                correctGuess(guess);
                 goodGuess = true;
             }
         }
         if (!goodGuess) {
-            incorrectGuess();
+            incorrectGuess(guess);
         }
     }//end processGuess(char)
 
-    private void correctGuess() {
+    private void correctGuess(char letter) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void incorrectGuess() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void incorrectGuess(char letter) {
+        int index = POSSIBLE_CHANCES;
+        String badLetters1 = "";
+        String badLetters2 = "";
+        for (int i = 0; i < POSSIBLE_CHANCES; i++) {
+            System.out.println("badGuesses[i].length() " + badGuesses[i].length());
+            if (badGuesses[i].length() == 0) {
+                if (i < index) {
+                    index = i;
+                }
+            }
+        }
+        //add the bad guess to the badGuesses array
+        badGuesses[index] = ("" + letter);
+        for (int j = 0; j < 3; j++) {
+            badLetters1 = (badLetters1 + badGuesses[j] + " ");
+        }
+        for (int k = 3; k < 6; k++) {
+            badLetters2 = (badLetters2 + badGuesses[k] + " ");
+        }
+        //update the GameScreen
+        lBadGuesses1.setText(badLetters1.toUpperCase());
+        lBadGuesses2.setText(badLetters2.toUpperCase());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -232,7 +269,8 @@ public class GameScreen extends javax.swing.JFrame {
     private javax.swing.JButton bGuess;
     private javax.swing.JLabel gallowsPic;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel lBadGuesses;
+    private javax.swing.JLabel lBadGuesses1;
+    private javax.swing.JLabel lBadGuesses2;
     private javax.swing.JLabel lSecretWord;
     private javax.swing.JTextField tboxLetter;
     // End of variables declaration//GEN-END:variables
