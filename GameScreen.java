@@ -17,8 +17,9 @@ import javax.swing.*;
  */
 public class GameScreen extends javax.swing.JFrame {
 
-    final int POSSIBLE_CHANCES = 7;
+    final int POSSIBLE_CHANCES = 6;
     String chosenWord;
+    String hiddenWord;
     word_bank1 wordBank;
     String[] image_bank = {"/images/0.jpg",
         "/images/1.jpg",
@@ -39,9 +40,16 @@ public class GameScreen extends javax.swing.JFrame {
         initComponents();
         word_bank1 wordBank = new word_bank1();
         chosenWord = wordBank.getWord();
+        hiddenWord = "";
+        for (int blanks = 0; blanks < chosenWord.length(); blanks++) {
+            hiddenWord = (hiddenWord + "_");
+        }
         gallowsIcon = new ImageIcon(getClass().getResource(image_bank[0]));
         gallowsPic.setIcon(gallowsIcon);
         tboxLetter.requestFocus();
+        updateSecretWord(hiddenWord);
+        //makes it so when a user presses Enter, the GUESS button is pressed.
+        this.getRootPane().setDefaultButton(bGuess);
     }
 
     /**
@@ -76,8 +84,8 @@ public class GameScreen extends javax.swing.JFrame {
         bGiveUp.setText("Give Up");
 
         lSecretWord.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lSecretWord.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lSecretWord.setText("         _ _ _ _ _ _ _ _ _ _ _ _ _ ");
-        lSecretWord.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel1.setText("Incorrect Guesses:");
 
@@ -147,16 +155,20 @@ public class GameScreen extends javax.swing.JFrame {
         String nextGuess = tboxLetter.getText().toLowerCase().trim();
         String popUpMessage = "Please only guess one letter at a time.";
         char temp = ' ';
-        //check to see if the user only entered a letter, then process the guess.
-        if (validGuess(nextGuess)) {
-            temp = nextGuess.charAt(0);
-            processGuess(temp);
-            tboxLetter.setText("");
+        if (bGuess.getText() == "RESTART") {
+            resetGame();
         } else {
-            tboxLetter.setText("");
-            JOptionPane.showMessageDialog(this, popUpMessage, "Try Again", JOptionPane.ERROR_MESSAGE);
+            //check to see if the user only entered a letter, then process the guess.
+            if (validGuess(nextGuess)) {
+                temp = nextGuess.charAt(0);
+                processGuess(temp);
+                tboxLetter.setText("");
+            } else {
+                tboxLetter.setText("");
+                JOptionPane.showMessageDialog(this, popUpMessage, "Try Again", JOptionPane.ERROR_MESSAGE);
+            }
+            tboxLetter.requestFocus();
         }
-        tboxLetter.requestFocus();
     }//GEN-LAST:event_bGuessActionPerformed
 //end bGuessActionPerformed()
 
@@ -236,32 +248,75 @@ public class GameScreen extends javax.swing.JFrame {
     }//end processGuess(char)
 
     private void correctGuess(char letter) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String secondHalf;
+        boolean blanksRemaining = false;
+        for (int i = 0; i < chosenWord.length(); i++) {
+            //the hiddenWord index is chosenWord index*2-1
+            if (letter == chosenWord.charAt(i)) {
+                secondHalf = hiddenWord.substring(i + 1);
+                hiddenWord = (hiddenWord.substring(0, i) + letter + secondHalf);
+            }
+        }
+        //check to see if any unguessed letters remain
+        for (int j = 0; j < hiddenWord.length(); j++) {
+            if (hiddenWord.charAt(j) == '_') {
+                blanksRemaining = true;
+            }
+        }
+        updateSecretWord(hiddenWord);
+        if (!blanksRemaining) {
+            //THEY WON
+            gallowsIcon = new ImageIcon(getClass().getResource(image_bank[7]));
+            gallowsPic.setIcon(gallowsIcon);
+            bGuess.setText("RESTART");
+            bGiveUp.setVisible(false);
+            tboxLetter.setVisible(false);
+        }
     }
 
+    /**
+     * This method handles changing the image and incorrect guesses: parts of
+     * the GameScreen. If the maximum number of guesses have already been used
+     * then the loss image is displayed.
+     *
+     * @param letter the letter to be added to the incorrect guesses label if
+     * there are more guesses available.
+     */
     private void incorrectGuess(char letter) {
         int index = POSSIBLE_CHANCES;
         String badLetters1 = "";
         String badLetters2 = "";
         for (int i = 0; i < POSSIBLE_CHANCES; i++) {
-            System.out.println("badGuesses[i].length() " + badGuesses[i].length());
             if (badGuesses[i].length() == 0) {
                 if (i < index) {
                     index = i;
                 }
             }
         }
-        //add the bad guess to the badGuesses array
-        badGuesses[index] = ("" + letter);
-        for (int j = 0; j < 3; j++) {
-            badLetters1 = (badLetters1 + badGuesses[j] + " ");
+        //check to see if the user has run out of guesses
+        if (index == POSSIBLE_CHANCES) {
+            //THEY LOST
+            gallowsIcon = new ImageIcon(getClass().getResource(image_bank[8]));
+            gallowsPic.setIcon(gallowsIcon);
+            bGuess.setText("RESTART");
+            bGiveUp.setVisible(false);
+            tboxLetter.setVisible(false);
+        } //the user still has guesses left
+        else {
+            //add the bad guess to the badGuesses array
+            badGuesses[index] = ("" + letter);
+            for (int j = 0; j < 3; j++) {
+                badLetters1 = (badLetters1 + badGuesses[j] + " ");
+            }
+            for (int k = 3; k < 6; k++) {
+                badLetters2 = (badLetters2 + badGuesses[k] + " ");
+            }
+            //update the GameScreen
+            lBadGuesses1.setText(badLetters1.toUpperCase());
+            lBadGuesses2.setText(badLetters2.toUpperCase());
+            gallowsIcon = new ImageIcon(getClass().getResource(image_bank[index + 1]));
+            gallowsPic.setIcon(gallowsIcon);
         }
-        for (int k = 3; k < 6; k++) {
-            badLetters2 = (badLetters2 + badGuesses[k] + " ");
-        }
-        //update the GameScreen
-        lBadGuesses1.setText(badLetters1.toUpperCase());
-        lBadGuesses2.setText(badLetters2.toUpperCase());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -274,5 +329,35 @@ public class GameScreen extends javax.swing.JFrame {
     private javax.swing.JLabel lSecretWord;
     private javax.swing.JTextField tboxLetter;
     // End of variables declaration//GEN-END:variables
+
+    private void updateSecretWord(String hiddenWord) {
+        String output = "";
+        for (int i = 0; i < hiddenWord.length(); i++) {
+            output = (output + hiddenWord.charAt(i) + " ");
+        }
+        lSecretWord.setText(output);
+    }
+
+    private void resetGame() {
+        for (int i = 0; i < badGuesses.length; i++) {
+            badGuesses[i] = "";
+            System.out.println("badGuesses: " + badGuesses.toString());
+        }
+        bGuess.setText("Guess");
+        bGiveUp.setVisible(true);
+        tboxLetter.setVisible(true);
+        word_bank1 wordBank = new word_bank1();
+        chosenWord = wordBank.getWord();
+        hiddenWord = "";
+        for (int blanks = 0; blanks < chosenWord.length(); blanks++) {
+            hiddenWord = (hiddenWord + "_");
+        }
+        gallowsIcon = new ImageIcon(getClass().getResource(image_bank[0]));
+        gallowsPic.setIcon(gallowsIcon);
+        tboxLetter.requestFocus();
+        updateSecretWord(hiddenWord);
+        lBadGuesses1.setText("");
+        lBadGuesses2.setText("");
+    }
 
 }
